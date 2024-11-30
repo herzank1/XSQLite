@@ -22,9 +22,10 @@ public class BaseDao<T> {
         return  (T) ConnectionPoolManager.getDato(clazz).findByColumn(columnName, value);
     }
     
-    public static ArrayList readAll(Class clazz){
-        return (ArrayList) ConnectionPoolManager.getDato(clazz).readAll();
-    }
+    public static <T> ArrayList<T> readAll(Class<T> clazz) {
+    // Supongamos que ConnectionPoolManager.getDato(clazz).readAll() devuelve una colección genérica
+    return new ArrayList<>(ConnectionPoolManager.getDato(clazz).readAll());
+}
     
     public static ArrayList findByColumnList(Class clazz,String columnName,String value){
         return (ArrayList) ConnectionPoolManager.getDato(clazz).findByColumnList(columnName, value);

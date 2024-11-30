@@ -19,3 +19,30 @@ Velocidad optimizada: Diseñada para garantizar un rendimiento sobresaliente en 
 Escalabilidad: Ideal tanto para proyectos pequeños como para aplicaciones complejas con múltiples fuentes de datos.
 Simplicidad y automatización: Reduce la carga de trabajo del desarrollador al automatizar la creación y el mantenimiento de bases de datos.
 Con XSQLite, gestionar bases de datos SQLite nunca fue tan fácil. Es la solución perfecta para desarrolladores que buscan flexibilidad, eficiencia y un enfoque moderno en la administración de datos.
+
+
+Uso 
+
+Creando una conexion
+ConnectionPoolManager.addConnection("DataBase.sqlite", YourFirst.class,YourSecond.class);
+
+Obtener el Dao de la classe
+ConnectionPoolManager.getConection(YourSecond.clazz)
+
+Obteniendo el Dao podras hacer las operaciones CRUD
+
+y si prefieres extender tu clase de BaseDao para acceder a los metodos
+
+public class YourSecond extends BaseDao{
+    
+    @DatabaseField(id = true)
+    String id;
+    @DatabaseField
+    String data;
+    
+}
+
+Actualiza tu objeto en la base de datos
+
+YourSecond.setData("new data");
+YourSecond.update();
