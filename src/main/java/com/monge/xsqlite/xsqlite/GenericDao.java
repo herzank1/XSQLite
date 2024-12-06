@@ -1,4 +1,3 @@
-
 package com.monge.xsqlite.xsqlite;
 
 import com.j256.ormlite.dao.Dao;
@@ -43,7 +42,7 @@ public class GenericDao<T, ID> {
         try {
             dao.create(entity);
         } catch (SQLException ex) {
-           Logger.getLogger(GenericDao.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(GenericDao.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -158,5 +157,9 @@ public class GenericDao<T, ID> {
         // Reemplazar caracteres especiales y espacios con guiones bajos
         String tableName = className.replaceAll("[^a-zA-Z0-9]", "_");
         return tableName;
+    }
+
+    public Map<ID, T> getCache() {
+        return this.cache;
     }
 }

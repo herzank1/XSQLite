@@ -78,6 +78,18 @@ public class SqliteConnection {
     public String getUrl() {
         return url;
     }
+    
+    /***
+     * Clears all caches of this conection
+     */
+    public void clearCaches(){
+     for (Map.Entry<Class<?>, GenericDao<?,String>> entry : daos.entrySet()) {
+            
+            GenericDao<?,?> dao = entry.getValue();
+            dao.clearCache();
+            
+        }
+    }
 
 
     

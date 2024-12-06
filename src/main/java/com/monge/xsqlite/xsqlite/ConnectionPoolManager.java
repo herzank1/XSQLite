@@ -58,11 +58,13 @@ public static void addConnection(String databaseName, Class<?>... classes) {
         return conections.get(clazz);
     }
     
-    public static GenericDao getDato(Class clazz) {
+    public static GenericDao getDao(Class clazz) {
         return getConection(clazz).getDao(clazz);
     }
     
-    
+    public static void clearCacheOf(Class clazz){
+        conections.get(clazz).getDao(clazz).clearCache();
+    }
     
 
 }
