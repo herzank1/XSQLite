@@ -5,6 +5,7 @@ import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.support.ConnectionSource;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,7 +22,7 @@ import java.util.logging.Logger;
 public class GenericDao<T, ID> {
 
     private final Dao<T, ID> dao;
-    private final Class clazz;
+    private final Class<T> clazz;
     private final Map<ID, T> cache; // Caché para almacenar objetos
     private int cacheMaxSize = 50;
 
@@ -39,8 +40,17 @@ public class GenericDao<T, ID> {
      * @param entity
      */
     public void create(T entity) {
+        if (entity == null) {
+            throw new IllegalArgumentException("Entity cannot be null");
+        }
+
         try {
             dao.create(entity);
+            ID id = dao.extractId(entity);
+            if (id != null) {
+                ensureCacheLimit(); // Asegurar límite del caché
+                cache.put(id, entity);
+            }
         } catch (SQLException ex) {
             Logger.getLogger(GenericDao.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -56,6 +66,7 @@ public class GenericDao<T, ID> {
         try {
             T entity = dao.queryForId(id);
             if (entity != null) {
+                ensureCacheLimit(); // Asegurar límite del caché
                 cache.put(id, entity); // Guardar en el caché
             }
             return entity;
@@ -65,9 +76,9 @@ public class GenericDao<T, ID> {
         return null;
     }
 
-    public List<T> readAll() {
+    public ArrayList<T> readAll() {
         try {
-            return dao.queryForAll();
+            return (ArrayList<T>) dao.queryForAll();
         } catch (SQLException ex) {
             Logger.getLogger(GenericDao.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -88,8 +99,10 @@ public class GenericDao<T, ID> {
         }
     }
 
-    public void delete(ID id) {
+    public void delete(T entity) {
+        
         try {
+            ID id = dao.extractId(entity);
             dao.deleteById(id);
             cache.remove(id); // Eliminar del caché también
         } catch (SQLException ex) {
@@ -99,6 +112,13 @@ public class GenericDao<T, ID> {
 
     public void clearCache() {
         this.cache.clear();
+    }
+
+    private void ensureCacheLimit() {
+        if (cache.size() > cacheMaxSize) {
+            ID firstKey = cache.keySet().iterator().next(); // Obtener el primer elemento
+            cache.remove(firstKey); // Eliminar del caché
+        }
     }
 
     // Método genérico para buscar por columna
@@ -128,15 +148,20 @@ public class GenericDao<T, ID> {
      * @param value el valor a buscar
      * @return una lista de objetos que coinciden con la condición
      */
-    public List<T> findByColumnList(String columnName, Object value) {
-        try {
-            QueryBuilder<T, ID> queryBuilder = dao.queryBuilder();
-            queryBuilder.where().eq(columnName, value); // Agregar la condición de igualdad
-            return queryBuilder.query(); // Devuelve todos los resultados que coinciden
-        } catch (SQLException e) {
-            Logger.getLogger(GenericDao.class.getName()).log(Level.SEVERE, "Error al buscar por columna: " + columnName, e);
-            return null; // Retorna null en caso de error
-        }
+   public List<T> findByColumnList(String columnName, Object value) {
+    try {
+        QueryBuilder<T, ID> queryBuilder = dao.queryBuilder();
+        queryBuilder.where().eq(columnName, value);
+        List<T> results = queryBuilder.query();
+        return results != null ? results : new ArrayList<>();
+    } catch (SQLException e) {
+        Logger.getLogger(GenericDao.class.getName()).log(Level.SEVERE, "Error al buscar por columna: " + columnName, e);
+        return new ArrayList<>(); // Retorna una lista vacía
+    }
+}
+
+    public Dao<T, ID> getFinalDao() {
+        return this.dao;
     }
 
     public String getTableName() {

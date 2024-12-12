@@ -16,4 +16,6 @@ public class TestObject extends BaseDao{
     @DatabaseField
     String data;
     
+    
+    
 }

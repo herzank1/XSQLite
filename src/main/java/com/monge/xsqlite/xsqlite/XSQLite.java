@@ -14,6 +14,8 @@ public class XSQLite {
         TestObject obj = new TestObject();
         obj = (TestObject) obj.read("278a4060-c21e-4a9b-8721-e1fbf9838f29");
         System.out.println(obj);
+        
+    
       
     }
 }
