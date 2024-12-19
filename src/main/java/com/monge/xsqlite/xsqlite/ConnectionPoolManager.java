@@ -1,6 +1,8 @@
 package com.monge.xsqlite.xsqlite;
 
-import com.monge.xsqlite.xsqlite.GenericDao;
+import com.monge.xsqlite.connectors.DataBaseConection;
+import com.monge.xsqlite.connectors.SqliteConection;
+import com.monge.xsqlite.utils.GenericDao;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -10,7 +12,7 @@ import java.util.Map;
  */
 public class ConnectionPoolManager {
 
-    static final Map<Class, SqliteConnection> conections = new HashMap<>();
+    static final Map<Class, DataBaseConection> conections = new HashMap<>();
 
     /**
      * Agrega una nueva conexión a una base de datos SQLite con las clases
@@ -25,9 +27,9 @@ public class ConnectionPoolManager {
      * @throws IllegalArgumentException Si el nombre de la base de datos o las
      * clases son nulos o vacíos.
      */
-    public static void addConnection(String databaseName, Class<?>... classes) {
+    public static void addConnection(DataBaseConection connection, Class<?>... classes) {
         // Validar el nombre de la base de datos
-        if (databaseName == null || databaseName.trim().isEmpty()) {
+        if (connection == null) {
             throw new IllegalArgumentException("El nombre de la base de datos no puede ser nulo o vacío.");
         }
 
@@ -37,13 +39,13 @@ public class ConnectionPoolManager {
         }
 
         // Crear una nueva conexión a la base de datos
-        SqliteConnection newConnection = new SqliteConnection(databaseName);
+        
 
         // Asociar las clases con la conexión y registrar la conexión en el mapa
         for (Class<?> clazz : classes) {
             if (clazz != null) {
-                newConnection.addDao(clazz);
-                conections.put(clazz, newConnection);
+                connection.addDao(clazz);
+                conections.put(clazz, connection);
             } else {
                 throw new IllegalArgumentException("Una de las clases proporcionadas es nula.");
             }
@@ -57,9 +59,9 @@ public class ConnectionPoolManager {
      * @param clazz
      * @return la conexion relacionada a esa classe
      */
-    public static <T> SqliteConnection getConection(Class<T> clazz) {
+    public static <T> DataBaseConection getConection(Class<T> clazz) {
 
-        SqliteConnection connection = conections.get(clazz);
+        DataBaseConection connection = conections.get(clazz);
         if (connection == null) {
             throw new IllegalStateException("No se pudo obtener una conexión para la clase: " + clazz.getName());
         }

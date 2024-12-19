@@ -4,6 +4,7 @@
  */
 package com.monge.xsqlite.xsqlite;
 
+import com.monge.xsqlite.utils.GenericDao;
 import java.util.ArrayList;
 
 /***

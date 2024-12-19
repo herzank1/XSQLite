@@ -1,8 +1,14 @@
-package com.monge.xsqlite.xsqlite;
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package com.monge.xsqlite.connectors;
 
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
+import com.monge.xsqlite.utils.GenericDao;
+import com.monge.xsqlite.utils.TableValidator;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -12,39 +18,31 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Use this class to create more sql nodes for load distribution in sqlite data
- * base
  *
  * @author DeliveryExpress
  */
-public class SqliteConnection {
+public class DataBaseConection {
 
     private ConnectionSource connectionSource;
     private String url;
 
     private Map<Class<?>, GenericDao<?, String>> daos = new HashMap<>();
 
+    public ConnectionSource getConnectionSource() {
+        return connectionSource;
+    }
+
+    public void setConnectionSource(ConnectionSource connectionSource) {
+        this.connectionSource = connectionSource;
+    }
+
     /**
      * *
      *
      * @param fileName exmaple: database.sqlite
      */
-    public SqliteConnection(String fileName) {
-
-        try {
-            // Verificar si el archivo de la base de datos existe
-            File dbFile = new File(fileName);
-            if (!dbFile.exists()) {
-                dbFile.createNewFile(); // Crear el archivo de base de datos si no existe
-            }
-
-            // Cargar el controlador JDBC para SQLite
-            Class.forName("org.sqlite.JDBC");
-            this.url = "jdbc:sqlite:" + fileName;
-            connectionSource = new JdbcConnectionSource(this.url);
-
-        } catch (SQLException | ClassNotFoundException | IOException ex) {
-        }
+    public DataBaseConection(ConnectionSource connectionSource) {
+        this.connectionSource = connectionSource;
     }
 
     public Map<Class<?>, GenericDao<?, String>> getDaos() {
@@ -59,7 +57,7 @@ public class SqliteConnection {
             System.out.println("DAO registrado para la clase: " + clazz.getName()
                     + " en la conexion " + this.url);
         } catch (SQLException ex) {
-            Logger.getLogger(SqliteConnection.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(SqliteConection.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

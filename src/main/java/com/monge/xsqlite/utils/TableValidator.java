@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.monge.xsqlite.xsqlite;
+package com.monge.xsqlite.utils;
 
 /**
  * Esta clase contiene las funciones necesarias para verificar si las clases han sido modificadas,
@@ -12,6 +12,8 @@ package com.monge.xsqlite.xsqlite;
 
 
 import com.j256.ormlite.field.DatabaseField;
+import com.monge.xsqlite.connectors.DataBaseConection;
+import com.monge.xsqlite.connectors.SqliteConection;
 import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -24,7 +26,7 @@ public class TableValidator {
 
     
     
-     static void verifyTable(SqliteConnection connectionSource, GenericDao<?, ?> dao, Class<?> clazz) {
+     public static void verifyTable(DataBaseConection connectionSource, GenericDao<?, ?> dao, Class<?> clazz) {
     
     
         if (!verifyTableColumns(connectionSource,dao, clazz)) {
@@ -37,7 +39,7 @@ public class TableValidator {
  
 
     // Método principal que verifica si las columnas de la clase coinciden con las de la tabla en la base de datos
-    private static <T> boolean verifyTableColumns(SqliteConnection connectionSource,GenericDao dao, Class<T> clazz) {
+    public static <T> boolean verifyTableColumns(DataBaseConection connectionSource,GenericDao dao, Class<T> clazz) {
         try {
             Set<String> classFields = getClassFields(clazz);
             //System.out.println("Columnas en la classe: " + classFields.toString());
@@ -51,7 +53,7 @@ public class TableValidator {
         }
     }
     
-        private static <T> void addMissingColumns(SqliteConnection connectionSource,GenericDao dao, Class<T> clazz) {
+        private static <T> void addMissingColumns(DataBaseConection connectionSource,GenericDao dao, Class<T> clazz) {
         try {
             Set<String> tableColumns = getTableColumns(connectionSource,dao);
             Set<String> classFields = getClassFields(clazz);
@@ -67,7 +69,7 @@ public class TableValidator {
     }
 
     // Método para obtener los nombres de las columnas de la clase a través de reflexión
-    private static <T> Set<String> getClassFields(Class<T> clazz) {
+    public static <T> Set<String> getClassFields(Class<T> clazz) {
         Set<String> classFields = new HashSet<>();
         for (Field field : clazz.getDeclaredFields()) {
             if (field.isAnnotationPresent(DatabaseField.class)) {
@@ -83,7 +85,7 @@ public class TableValidator {
     }
 
     // Método para obtener los nombres de las columnas de la tabla en la base de datos SQLite usando PRAGMA table_info
-    private static <T> Set<String> getTableColumns(SqliteConnection connectionSource,GenericDao dao) throws Exception {
+    public static <T> Set<String> getTableColumns(DataBaseConection connectionSource,GenericDao dao) throws Exception {
         Set<String> tableColumns = new HashSet<>();
         String tableName = dao.getTableName();
 
@@ -99,7 +101,7 @@ public class TableValidator {
     }
     
     // Método para agregar una nueva columna a la tabla
-    private static void addColumn(SqliteConnection connectionSource,String tableName, String columnName) {
+    public static void addColumn(DataBaseConection connectionSource,String tableName, String columnName) {
         String sql = "ALTER TABLE " + tableName + " ADD COLUMN " + columnName + " TEXT"; // Cambia el tipo según lo necesites
 
         try (Connection conn = DriverManager.getConnection(connectionSource.getUrl());

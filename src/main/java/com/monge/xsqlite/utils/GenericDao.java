@@ -1,4 +1,4 @@
-package com.monge.xsqlite.xsqlite;
+package com.monge.xsqlite.utils;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;

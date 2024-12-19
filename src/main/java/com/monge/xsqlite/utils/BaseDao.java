@@ -1,6 +1,8 @@
-package com.monge.xsqlite.xsqlite;
+package com.monge.xsqlite.utils;
 
+import com.monge.xsqlite.utils.GenericDao;
 import com.j256.ormlite.dao.Dao;
+import com.monge.xsqlite.xsqlite.DataBaseMethods;
 import java.util.ArrayList;
 import java.util.List;
 
